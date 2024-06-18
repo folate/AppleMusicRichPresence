@@ -151,6 +151,10 @@ internal class Program
         var res = await HttpClient.GetAsync(
             $"https://tools.applemediaservices.com/api/apple-media/music/US/search.json?types=songs&limit=1&term={query}");
         var json = JsonSerializer.Deserialize<AppleMusicSearchResult>(await res.Content.ReadAsStringAsync());
+        if (json.songs==null)
+        {
+            return "https://cdn-1.webcatalog.io/catalog/apple-music/apple-music-icon-filled-256.webp";
+        }
         Console.WriteLine($"Time taken to get album cover url: {DateTime.Now - t1}");
         return json.songs.data[0].attributes.artwork.url.Replace("{w}", "128").Replace("{h}", "128");
     }
@@ -177,8 +181,7 @@ internal class Program
             },
             Timestamps = new Timestamps
             {
-                End = DateTime.Now.ToUniversalTime().AddSeconds(double.Parse(nowPlayingArray[4]) -
-                                                                double.Parse(playerPostion,
+                End = DateTime.Now.ToUniversalTime().AddSeconds(double.Parse(nowPlayingArray[4]) - double.Parse(playerPostion,
                                                                     CultureInfo.InvariantCulture))
             }
         });
